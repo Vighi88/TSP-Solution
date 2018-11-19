@@ -2,6 +2,7 @@ package com.infy.TSP.runner;
 
 import java.io.*;
 import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 
 
 public class TspRunner {
@@ -15,7 +16,8 @@ public class TspRunner {
 
     
     public static void main(String args[]){
-
+    	
+    	PropertyConfigurator.configure("/log4j.properties");
         //File path location inside docker container
         String matrixFile = args[0];
 
@@ -25,12 +27,13 @@ public class TspRunner {
         TspRunner runner = new TspRunner();
         logger.debug("Calling Bridge Method");
         runner.bridgeMethod(matrixFile, noOfCities);
-        
+        logger.debug("Printing Optimized Route !!");
+        System.out.print("Best Route From Current Node: " + bestRoute + ". Distance = " + distance);
 
     }
     
     
-    public void bridgeMethod(String filePath, int noOfCities)
+    public String bridgeMethod(String filePath, int noOfCities)
     {
     	distanceVector = new int[noOfCities][noOfCities];
 
@@ -81,20 +84,19 @@ public class TspRunner {
 
         routeFinder(0, vertices, path, 0);
 
-        System.out.print("Best Route From Current Node: " + bestRoute + ". Distance = " + distance);
-        logger.debug("Printed Optimized Route !!");
         
 		} catch (FileNotFoundException e) {
 			logger.error(e.getMessage());
 		} catch (IOException e) {
 			logger.error(e.getMessage());
 		}
+		return "Success";
     }
 
 
  
     //Recursive Function
-    private static int routeFinder(int initialNode, int vertices[], String pathFound, int costUntillNow) 
+    private int routeFinder(int initialNode, int vertices[], String pathFound, int costUntillNow) 
     {
        //Adding the current vertex to the path
     	pathFound = pathFound + Integer.toString(initialNode) + " - ";
