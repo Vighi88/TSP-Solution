@@ -1,7 +1,5 @@
 package com.infy.TSP.runner;
 
- 
-
 import java.io.*;
 import org.apache.log4j.Logger;
 
@@ -24,13 +22,23 @@ public class TspRunner {
         //Reading no of cities form command line arguments
         int noOfCities = Integer.parseInt(args[1]);
 
-        distanceVector = new int[noOfCities][noOfCities];
+        TspRunner runner = new TspRunner();
+        logger.debug("Calling Bridge Method");
+        runner.bridgeMethod(matrixFile, noOfCities);
+        
+
+    }
+    
+    
+    public void bridgeMethod(String filePath, int noOfCities)
+    {
+    	distanceVector = new int[noOfCities][noOfCities];
 
         // Loading the file specified by user
         logger.debug("Initiating file read..");
         FileReader fileReader;
 		try {
-			fileReader = new FileReader(matrixFile);
+			fileReader = new FileReader(filePath);
 		
         
         BufferedReader bufferedReader = new BufferedReader(fileReader);
@@ -43,11 +51,9 @@ public class TspRunner {
 
             String[] values = line.trim().split("\\s+");
             
-            System.out.println("  ");
-            
             for (int col = 0; col < noOfCities; col++) {
             	distanceVector[row][col] = Integer.parseInt(values[col]);
-
+            	
             }
 
         }
@@ -73,23 +79,22 @@ public class TspRunner {
         }
 
 
-        procedure(0, vertices, path, 0);
+        routeFinder(0, vertices, path, 0);
 
         System.out.print("Best Route From Current Node: " + bestRoute + ". Distance = " + distance);
-        
+        logger.debug("Printed Optimized Route !!");
         
 		} catch (FileNotFoundException e) {
 			logger.error(e.getMessage());
 		} catch (IOException e) {
 			logger.error(e.getMessage());
 		}
-
     }
 
 
  
     //Recursive Function
-    private static int procedure(int initialNode, int vertices[], String pathFound, int costUntillNow) 
+    private static int routeFinder(int initialNode, int vertices[], String pathFound, int costUntillNow) 
     {
        //Adding the current vertex to the path
     	pathFound = pathFound + Integer.toString(initialNode) + " - ";
@@ -145,7 +150,7 @@ public class TspRunner {
                 newCostCalculated = costOfCurrentNode + costUntillNow;
 
                 //Recursive call to calculate cost for sub problems
-                costChildPath = procedure(vertices[i], newVertices[i], pathFound, newCostCalculated);
+                costChildPath = routeFinder(vertices[i], newVertices[i], pathFound, newCostCalculated);
 
                 // Gives the cost of every child + the current node cost
                 int totalCost = costChildPath + costOfCurrentNode;
