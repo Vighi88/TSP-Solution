@@ -40,6 +40,7 @@ public class TspRunner {
         // Loading the file specified by user
         logger.debug("Initiating file read..");
         FileReader fileReader;
+        String result = "";
 		try {
 			fileReader = new FileReader(filePath);
 		
@@ -83,14 +84,14 @@ public class TspRunner {
 
 
         routeFinder(0, vertices, path, 0);
-
+        result = "Success";
         
 		} catch (FileNotFoundException e) {
 			logger.error(e.getMessage());
 		} catch (IOException e) {
 			logger.error(e.getMessage());
 		}
-		return "Success";
+		return result;
     }
 
 
